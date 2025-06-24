@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="新增支出"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="12dp" />
 
     <Button
         android:id="@+id/button_view_expenses"
