@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout 
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="16dp"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/tvWelcome"
-        android:text="欢迎使用车辆支出记录App"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="车辆支出记录"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginBottom="24dp" />
 
-    <!-- 添加支出按钮 -->
     <Button
-        android:id="@+id/btnAddExpense"
-        android:layout_width="wrap_content"
+        android:id="@+id/button_add_expense"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="添加支出" />
+        android:text="新增支出" />
 </LinearLayout>
