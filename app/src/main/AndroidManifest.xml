@@ -11,8 +11,13 @@
         <!-- android:icon="@mipmap/ic_launcher" -->
         <!-- android:roundIcon="@mipmap/ic_launcher_round" -->
 
-        <activity android:name=".AddExpenseActivity" android:exported="false" />
-        <activity android:name=".ViewExpensesActivity" android:exported="false" />
+        <activity
+            android:name=".ViewExpensesActivity"
+            android:exported="false" />
+        
+        <activity
+            android:name=".AddExpenseActivity"
+            android:exported="false" />
 
         <activity
             android:name=".MainActivity"
