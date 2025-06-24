@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var databaseHelper: ExpenseDatabaseHelper
     private lateinit var addButton: Button
     private lateinit var exportButton: Button
+    private lateinit var settingButton: Button  // 新增车辆设置按钮
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         // 绑定按钮
         addButton = findViewById(R.id.button_add_expense)
         exportButton = findViewById(R.id.button_export_csv)
+        settingButton = findViewById(R.id.button_vehicle_setting)  // 新增绑定
 
         // 点击“新增支出”
         addButton.setOnClickListener {
@@ -43,6 +45,12 @@ class MainActivity : AppCompatActivity() {
         // 点击“导出 CSV”
         exportButton.setOnClickListener {
             exportExpensesToCSV()
+        }
+
+        // 点击“车辆设置”
+        settingButton.setOnClickListener {
+            val intent = Intent(this, VehicleSettingActivity::class.java)
+            startActivity(intent)
         }
 
         // 初次加载支出列表
