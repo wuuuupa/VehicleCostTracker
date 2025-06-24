@@ -19,24 +19,23 @@ class VehicleSettingsActivity : AppCompatActivity() {
         etVehicleName = findViewById(R.id.etVehicleName)
         btnSaveVehicle = findViewById(R.id.btnSaveVehicle)
 
-        // 获取SharedPreferences
-        val sharedPref = getSharedPreferences("VehiclePrefs", Context.MODE_PRIVATE)
-
-        // 如果之前有保存的车辆名称，就显示
-        val savedVehicleName = sharedPref.getString("vehicle_name", "")
-        etVehicleName.setText(savedVehicleName)
+        // 加载已有的车辆名
+        val prefs = getSharedPreferences("vehicle_prefs", Context.MODE_PRIVATE)
+        val savedName = prefs.getString("vehicle_name", "")
+        etVehicleName.setText(savedName)
 
         btnSaveVehicle.setOnClickListener {
-            val vehicleName = etVehicleName.text.toString().trim()
-
-            if (vehicleName.isEmpty()) {
+            val name = etVehicleName.text.toString().trim()
+            if (name.isEmpty()) {
                 Toast.makeText(this, "请输入车辆名称", Toast.LENGTH_SHORT).show()
-            } else {
-                // 保存到 SharedPreferences
-                sharedPref.edit().putString("vehicle_name", vehicleName).apply()
-                Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show()
-                finish()
+                return@setOnClickListener
             }
+
+            // 保存到 SharedPreferences
+            prefs.edit().putString("vehicle_name", name).apply()
+            Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show()
+
+            finish() // 返回上一页
         }
     }
 }
