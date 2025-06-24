@@ -2,7 +2,6 @@ package com.example.vehiclecosttracker
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Environment
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -27,31 +26,32 @@ class MainActivity : AppCompatActivity() {
         // 初始化数据库
         databaseHelper = ExpenseDatabaseHelper(this)
 
-        // 初始化 RecyclerView
+        // 设置 RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // 初始化按钮
+        // 绑定按钮
         addButton = findViewById(R.id.button_add_expense)
         exportButton = findViewById(R.id.button_export_csv)
 
-        // 设置新增支出按钮点击事件
+        // 点击“新增支出”
         addButton.setOnClickListener {
             val intent = Intent(this, AddExpenseActivity::class.java)
             startActivity(intent)
         }
 
-        // 设置导出 CSV 按钮点击事件
+        // 点击“导出 CSV”
         exportButton.setOnClickListener {
             exportExpensesToCSV()
         }
 
-        // 加载支出数据
+        // 初次加载支出列表
         loadExpenses()
     }
 
     override fun onResume() {
         super.onResume()
+        // 页面重新显示时刷新支出数据
         loadExpenses()
     }
 
@@ -72,16 +72,14 @@ class MainActivity : AppCompatActivity() {
         val file = File(getExternalFilesDir(null), fileName)
 
         try {
-            val writer = FileWriter(file)
-            writer.append("金额,备注,时间\n")
-            for (expense in expenses) {
-                writer.append("${expense.amount},${expense.note},${expense.timestamp}\n")
+            FileWriter(file).use { writer ->
+                writer.append("金额,备注,时间\n")
+                for (expense in expenses) {
+                    writer.append("${expense.amount},${expense.note},${expense.timestamp}\n")
+                }
             }
-            writer.flush()
-            writer.close()
-            Toast.makeText(this, "CSV导出成功：${file.absolutePath}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "CSV 导出成功：\n${file.absolutePath}", Toast.LENGTH_LONG).show()
         } catch (e: IOException) {
-            e.printStackTrace()
             Toast.makeText(this, "导出失败：${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
