@@ -1,51 +1,46 @@
 package com.example.vehiclecosttracker
 
-import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import android.content.ContentValues
+import android.content.Context
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
 
-class AddExpenseActivity : AppCompatActivity() {
+class ExpenseDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
-    private lateinit var dbHelper: ExpenseDatabaseHelper
+    companion object {
+        private const val DATABASE_NAME = "expenses.db"
+        private const val DATABASE_VERSION = 1
+        const val TABLE_NAME = "expenses"
+        const val COLUMN_ID = "id"
+        const val COLUMN_AMOUNT = "amount"
+        const val COLUMN_NOTE = "note"
+        const val COLUMN_TIMESTAMP = "timestamp"
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_expense)
+    override fun onCreate(db: SQLiteDatabase) {
+        val createTable = """
+            CREATE TABLE $TABLE_NAME (
+                $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                $COLUMN_AMOUNT REAL NOT NULL,
+                $COLUMN_NOTE TEXT,
+                $COLUMN_TIMESTAMP DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        """.trimIndent()
+        db.execSQL(createTable)
+    }
 
-        dbHelper = ExpenseDatabaseHelper(this)  // ✅ 初始化数据库助手
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
+        onCreate(db)
+    }
 
-        val etAmount = findViewById<EditText>(R.id.etAmount)
-        val etNote = findViewById<EditText>(R.id.etNote)
-        val btnSave = findViewById<Button>(R.id.btnSave)
-
-        btnSave.setOnClickListener {
-            val amountText = etAmount.text.toString().trim()
-            val noteText = etNote.text.toString().trim()
-
-            if (amountText.isEmpty()) {
-                Toast.makeText(this, "请输入金额", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val amount = amountText.toDoubleOrNull()
-            if (amount == null || amount <= 0) {
-                Toast.makeText(this, "请输入有效金额", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // ✅ 保存到数据库
-            val db = dbHelper.writableDatabase
-            val sql = "INSERT INTO expenses (amount, note) VALUES (?, ?)"
-            val statement = db.compileStatement(sql)
-            statement.bindDouble(1, amount)
-            statement.bindString(2, noteText)
-            statement.executeInsert()
-
-            Toast.makeText(this, "保存成功：¥$amount\n备注：$noteText", Toast.LENGTH_LONG).show()
-
-            finish()
+    fun insertExpense(amount: Double, note: String): Boolean {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(COLUMN_AMOUNT, amount)
+            put(COLUMN_NOTE, note)
         }
+        val result = db.insert(TABLE_NAME, null, values)
+        return result != -1L
     }
 }
