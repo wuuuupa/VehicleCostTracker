@@ -7,12 +7,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.VehicleCostTracker">
-        <!-- 图标暂不设置，以下两行注释掉 -->
+        <!-- 图标暂不设置，以下两行已注释掉 -->
         <!-- android:icon="@mipmap/ic_launcher" -->
         <!-- android:roundIcon="@mipmap/ic_launcher_round" -->
 
-        <activity android:name=".VehicleSettingActivity" />
-
+        <activity android:name=".VehicleSettingsActivity" />
+        
         <activity
             android:name=".AddExpenseActivity"
             android:exported="false" />
@@ -25,7 +25,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>
