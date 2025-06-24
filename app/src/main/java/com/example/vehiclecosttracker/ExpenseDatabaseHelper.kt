@@ -5,58 +5,48 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-class ExpenseDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
-
-    companion object {
-        private const val DB_NAME = "expenses.db"
-        private const val DB_VERSION = 1
-        private const val TABLE_NAME = "expenses"
-        private const val COLUMN_ID = "id"
-        private const val COLUMN_AMOUNT = "amount"
-        private const val COLUMN_NOTE = "note"
-        private const val COLUMN_TIMESTAMP = "timestamp"
-    }
+class ExpenseDatabaseHelper(context: Context) :
+    SQLiteOpenHelper(context, "expenses.db", null, 1) {
 
     override fun onCreate(db: SQLiteDatabase) {
-        val createTable = """
-            CREATE TABLE $TABLE_NAME (
-                $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                $COLUMN_AMOUNT REAL,
-                $COLUMN_NOTE TEXT,
-                $COLUMN_TIMESTAMP INTEGER
-            )
-        """.trimIndent()
-        db.execSQL(createTable)
+        db.execSQL(
+            "CREATE TABLE expenses (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "amount REAL, " +
+                    "note TEXT, " +
+                    "timestamp TEXT)"
+        )
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
+        db.execSQL("DROP TABLE IF EXISTS expenses")
         onCreate(db)
     }
 
-    fun insertExpense(expense: Expense): Long {
+    fun insertExpense(amount: Double, note: String, timestamp: String): Long {
         val db = writableDatabase
         val values = ContentValues().apply {
-            put(COLUMN_AMOUNT, expense.amount)
-            put(COLUMN_NOTE, expense.note)
-            put(COLUMN_TIMESTAMP, expense.timestamp)
+            put("amount", amount)
+            put("note", note)
+            put("timestamp", timestamp)
         }
-        return db.insert(TABLE_NAME, null, values)
+        return db.insert("expenses", null, values)
     }
 
     fun getAllExpenses(): List<Expense> {
-        val db = readableDatabase
-        val cursor = db.query(TABLE_NAME, null, null, null, null, null, "$COLUMN_TIMESTAMP DESC")
         val expenses = mutableListOf<Expense>()
-        with(cursor) {
-            while (moveToNext()) {
-                val id = getLong(getColumnIndexOrThrow(COLUMN_ID))
-                val amount = getDouble(getColumnIndexOrThrow(COLUMN_AMOUNT))
-                val note = getString(getColumnIndexOrThrow(COLUMN_NOTE))
-                val timestamp = getLong(getColumnIndexOrThrow(COLUMN_TIMESTAMP))
-                expenses.add(Expense(id, amount, note, timestamp))
-            }
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM expenses ORDER BY id DESC", null)
+
+        while (cursor.moveToNext()) {
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+            val amount = cursor.getDouble(cursor.getColumnIndexOrThrow("amount"))
+            val note = cursor.getString(cursor.getColumnIndexOrThrow("note"))
+            val timestamp = cursor.getString(cursor.getColumnIndexOrThrow("timestamp"))
+
+            expenses.add(Expense(id, amount, note, timestamp))
         }
+
         cursor.close()
         return expenses
     }
