@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ExpenseAdapter(private val expenses: List<Expense>) :
+class ExpenseAdapter(private val expenseList: List<Expense>) :
     RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder>() {
 
     class ExpenseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -21,10 +21,10 @@ class ExpenseAdapter(private val expenses: List<Expense>) :
     }
 
     override fun onBindViewHolder(holder: ExpenseViewHolder, position: Int) {
-        val expense = expenses[position]
-        holder.amountText.text = "金额：¥${expense.amount}"
-        holder.noteText.text = "备注：${expense.note}"
+        val expense = expenseList[position]
+        holder.amountText.text = "¥${expense.amount}"
+        holder.noteText.text = expense.note
     }
 
-    override fun getItemCount(): Int = expenses.size
+    override fun getItemCount(): Int = expenseList.size
 }
