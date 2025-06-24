@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.vehiclecosttracker">
 
@@ -10,8 +11,9 @@
         <!-- android:icon="@mipmap/ic_launcher" -->
         <!-- android:roundIcon="@mipmap/ic_launcher_round" -->
 
-        <activity android:name=".AddExpenseActivity" />
-        <activity android:name=".ViewExpensesActivity" />
+        <activity android:name=".AddExpenseActivity" android:exported="false" />
+        <activity android:name=".ViewExpensesActivity" android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
