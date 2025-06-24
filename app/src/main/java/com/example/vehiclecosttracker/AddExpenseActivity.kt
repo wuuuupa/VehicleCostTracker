@@ -5,20 +5,22 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AddExpenseActivity : AppCompatActivity() {
 
-    private lateinit var dbHelper: ExpenseDatabaseHelper
+    private lateinit var databaseHelper: ExpenseDatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_expense)
 
-        dbHelper = ExpenseDatabaseHelper(this)
-
         val etAmount = findViewById<EditText>(R.id.etAmount)
         val etNote = findViewById<EditText>(R.id.etNote)
         val btnSave = findViewById<Button>(R.id.btnSave)
+
+        databaseHelper = ExpenseDatabaseHelper(this)
 
         btnSave.setOnClickListener {
             val amountText = etAmount.text.toString().trim()
@@ -35,15 +37,8 @@ class AddExpenseActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // 保存进数据库
-            val expense = Expense(
-                id = 0L, // 自动递增
-                amount = amount,
-                note = noteText,
-                timestamp = System.currentTimeMillis()
-            )
-
-            val result = dbHelper.insertExpense(expense)
+            val timestamp = getCurrentTime()
+            val result = databaseHelper.insertExpense(amount, noteText, timestamp)
 
             if (result != -1L) {
                 Toast.makeText(this, "保存成功！", Toast.LENGTH_SHORT).show()
@@ -52,5 +47,10 @@ class AddExpenseActivity : AppCompatActivity() {
                 Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun getCurrentTime(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        return sdf.format(Date())
     }
 }
