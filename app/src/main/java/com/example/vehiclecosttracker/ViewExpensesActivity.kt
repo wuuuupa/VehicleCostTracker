@@ -7,19 +7,17 @@ import androidx.appcompat.app.AppCompatActivity
 
 class ViewExpensesActivity : AppCompatActivity() {
 
-    private lateinit var listView: ListView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_expenses)
 
-        listView = findViewById(R.id.listViewExpenses)
+        val listView = findViewById<ListView>(R.id.listViewExpenses)
 
-        // 临时模拟数据，后面会从数据库中读取
+        // 示例数据（我们稍后会从 SQLite 加载）
         val sampleExpenses = listOf(
-            "2025-06-01 - 加油 ¥120",
-            "2025-06-05 - 停车费 ¥20",
-            "2025-06-08 - 洗车 ¥30"
+            "¥50 - 加油（2025-06-24）",
+            "¥30 - 停车费（2025-06-23）",
+            "¥120 - 保养（2025-06-20）"
         )
 
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, sampleExpenses)
