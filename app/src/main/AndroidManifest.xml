@@ -11,6 +11,10 @@
         <!-- android:icon="@mipmap/ic_launcher" -->
         <!-- android:roundIcon="@mipmap/ic_launcher_round" -->
 
+        <!-- 注册添加支出页面 -->
+        <activity android:name=".AddExpenseActivity" />
+
+        <!-- 主页面 -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
