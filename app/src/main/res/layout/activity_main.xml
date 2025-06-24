@@ -28,4 +28,11 @@
         android:layout_height="wrap_content"
         android:text="新增支出"
         android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/button_vehicle_setting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="车辆设置"
+        android:layout_marginTop="8dp"/>
 </LinearLayout>
