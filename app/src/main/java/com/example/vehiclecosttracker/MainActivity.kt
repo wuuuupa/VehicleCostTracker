@@ -10,13 +10,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // 通过ID找到按钮
+        // 新增支出按钮
         val addButton = findViewById<Button>(R.id.button_add_expense)
-
-        // 设置点击事件
         addButton.setOnClickListener {
-            // 跳转到 AddExpenseActivity
             val intent = Intent(this, AddExpenseActivity::class.java)
+            startActivity(intent)
+        }
+
+        // 查看支出按钮
+        val viewButton = findViewById<Button>(R.id.button_view_expenses)
+        viewButton.setOnClickListener {
+            val intent = Intent(this, ViewExpensesActivity::class.java)
             startActivity(intent)
         }
     }
