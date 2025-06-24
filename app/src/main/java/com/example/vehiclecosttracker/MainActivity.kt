@@ -3,6 +3,7 @@ package com.example.vehiclecosttracker
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +19,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var databaseHelper: ExpenseDatabaseHelper
     private lateinit var addButton: Button
     private lateinit var exportButton: Button
-    private lateinit var vehicleSettingsButton: Button
+    private lateinit var settingsButton: Button
+    private lateinit var tvVehicleName: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,33 +28,43 @@ class MainActivity : AppCompatActivity() {
 
         databaseHelper = ExpenseDatabaseHelper(this)
 
+        // 初始化视图
+        tvVehicleName = findViewById(R.id.tvVehicleName)
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-
         addButton = findViewById(R.id.button_add_expense)
         exportButton = findViewById(R.id.button_export_csv)
-        vehicleSettingsButton = findViewById(R.id.button_vehicle_settings)
+        settingsButton = findViewById(R.id.button_vehicle_settings)
 
+        // 新增支出按钮点击事件
         addButton.setOnClickListener {
-            val intent = Intent(this, AddExpenseActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, AddExpenseActivity::class.java))
         }
 
+        // 导出CSV按钮点击事件
         exportButton.setOnClickListener {
             exportExpensesToCSV()
         }
 
-        vehicleSettingsButton.setOnClickListener {
-            val intent = Intent(this, VehicleSettingsActivity::class.java)
-            startActivity(intent)
+        // 设置按钮点击事件
+        settingsButton.setOnClickListener {
+            startActivity(Intent(this, VehicleSettingsActivity::class.java))
         }
 
+        loadVehicleName()
         loadExpenses()
     }
 
     override fun onResume() {
         super.onResume()
+        loadVehicleName()
         loadExpenses()
+    }
+
+    private fun loadVehicleName() {
+        val prefs = getSharedPreferences("vehicle_prefs", MODE_PRIVATE)
+        val vehicleName = prefs.getString("vehicle_name", "默认车辆")
+        tvVehicleName.text = "车辆：$vehicleName"
     }
 
     private fun loadExpenses() {
