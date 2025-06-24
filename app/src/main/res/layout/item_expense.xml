@@ -11,15 +11,16 @@
         android:id="@+id/tvAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="金额：¥100"
+        android:text="¥100.00"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="#222222" />
 
     <TextView
         android:id="@+id/tvNote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="备注：加油"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp" />
+        android:text="备注内容"
+        android:textSize="14sp"
+        android:textColor="#666666" />
 </LinearLayout>
