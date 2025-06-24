@@ -12,23 +12,32 @@ class AddExpenseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_expense)
 
+        // 获取控件引用
         val etAmount = findViewById<EditText>(R.id.etAmount)
         val etNote = findViewById<EditText>(R.id.etNote)
         val btnSave = findViewById<Button>(R.id.btnSave)
 
+        // 按钮点击事件
         btnSave.setOnClickListener {
-            val amountText = etAmount.text.toString()
-            val noteText = etNote.text.toString()
+            val amountText = etAmount.text.toString().trim()
+            val noteText = etNote.text.toString().trim()
 
+            // 校验金额
             if (amountText.isEmpty()) {
                 Toast.makeText(this, "请输入金额", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // 暂时我们只是弹出一个 Toast（后续再做保存）
-            Toast.makeText(this, "保存成功：¥$amountText\n备注：$noteText", Toast.LENGTH_LONG).show()
+            val amount = amountText.toDoubleOrNull()
+            if (amount == null || amount <= 0) {
+                Toast.makeText(this, "请输入有效金额", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-            // 你可以选择 finish() 回到上个界面
+            // 显示保存成功的提示
+            Toast.makeText(this, "保存成功：¥$amount\n备注：$noteText", Toast.LENGTH_LONG).show()
+
+            // 可选择返回上一页
             finish()
         }
     }
