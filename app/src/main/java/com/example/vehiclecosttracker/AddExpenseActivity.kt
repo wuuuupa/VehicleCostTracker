@@ -1,5 +1,6 @@
 package com.example.vehiclecosttracker
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -8,30 +9,24 @@ import androidx.appcompat.app.AppCompatActivity
 
 class AddExpenseActivity : AppCompatActivity() {
 
-    private lateinit var etAmount: EditText
-    private lateinit var etNote: EditText
-    private lateinit var etVehicle: EditText
-    private lateinit var btnSave: Button
     private lateinit var databaseHelper: ExpenseDatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_expense)
 
-        etAmount = findViewById(R.id.etAmount)
-        etNote = findViewById(R.id.etNote)
-        etVehicle = findViewById(R.id.etVehicle) // 新增输入框
-        btnSave = findViewById(R.id.btnSave)
-
         databaseHelper = ExpenseDatabaseHelper(this)
+
+        val etAmount = findViewById<EditText>(R.id.etAmount)
+        val etNote = findViewById<EditText>(R.id.etNote)
+        val btnSave = findViewById<Button>(R.id.btnSave)
 
         btnSave.setOnClickListener {
             val amountText = etAmount.text.toString().trim()
             val noteText = etNote.text.toString().trim()
-            val vehicleText = etVehicle.text.toString().trim()
 
-            if (amountText.isEmpty() || vehicleText.isEmpty()) {
-                Toast.makeText(this, "请输入金额和车辆名称", Toast.LENGTH_SHORT).show()
+            if (amountText.isEmpty()) {
+                Toast.makeText(this, "请输入金额", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -41,8 +36,19 @@ class AddExpenseActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            databaseHelper.insertExpense(amount, noteText, vehicleText)
-            Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show()
+            // 获取车辆名称
+            val sharedPref = getSharedPreferences("VehiclePrefs", Context.MODE_PRIVATE)
+            val vehicleName = sharedPref.getString("vehicle_name", "") ?: ""
+
+            if (vehicleName.isEmpty()) {
+                Toast.makeText(this, "请先设置车辆名称", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // 保存数据
+            databaseHelper.insertExpense(amount, noteText, vehicleName)
+
+            Toast.makeText(this, "保存成功：¥$amount\n备注：$noteText", Toast.LENGTH_LONG).show()
             finish()
         }
     }
