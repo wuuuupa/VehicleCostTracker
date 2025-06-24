@@ -11,16 +11,16 @@ class ViewExpensesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_expenses)
 
-        val listView = findViewById<ListView>(R.id.listViewExpenses)
+        val listView = findViewById<ListView>(R.id.listExpenses)
 
-        // 示例数据（我们稍后会从 SQLite 加载）
-        val sampleExpenses = listOf(
-            "¥50 - 加油（2025-06-24）",
-            "¥30 - 停车费（2025-06-23）",
-            "¥120 - 保养（2025-06-20）"
+        // 从数据库读取支出数据（这里我们用假数据代替，下一步会接入 SQLite）
+        val expenses = listOf(
+            "2024-06-01: ¥100 - 加油",
+            "2024-06-05: ¥50 - 停车",
+            "2024-06-08: ¥80 - 洗车"
         )
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, sampleExpenses)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, expenses)
         listView.adapter = adapter
     }
 }
