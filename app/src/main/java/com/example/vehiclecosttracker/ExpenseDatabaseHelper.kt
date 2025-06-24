@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 class ExpenseDatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, "expenses.db", null, 1) {
+    SQLiteOpenHelper(context, "expenses.db", null, 2) { // 版本号改为2
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
@@ -14,7 +14,8 @@ class ExpenseDatabaseHelper(context: Context) :
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "amount REAL, " +
                     "note TEXT, " +
-                    "timestamp TEXT)"
+                    "timestamp TEXT, " +
+                    "vehicle TEXT)"
         )
     }
 
@@ -23,12 +24,13 @@ class ExpenseDatabaseHelper(context: Context) :
         onCreate(db)
     }
 
-    fun insertExpense(amount: Double, note: String, timestamp: String): Long {
+    fun insertExpense(amount: Double, note: String, timestamp: String, vehicleName: String): Long {
         val db = writableDatabase
         val values = ContentValues().apply {
             put("amount", amount)
             put("note", note)
             put("timestamp", timestamp)
+            put("vehicle", vehicleName)
         }
         return db.insert("expenses", null, values)
     }
@@ -43,8 +45,9 @@ class ExpenseDatabaseHelper(context: Context) :
             val amount = cursor.getDouble(cursor.getColumnIndexOrThrow("amount"))
             val note = cursor.getString(cursor.getColumnIndexOrThrow("note"))
             val timestamp = cursor.getString(cursor.getColumnIndexOrThrow("timestamp"))
+            val vehicle = cursor.getString(cursor.getColumnIndexOrThrow("vehicle"))
 
-            expenses.add(Expense(id, amount, note, timestamp))
+            expenses.add(Expense(id, amount, note, timestamp, vehicle))
         }
 
         cursor.close()
