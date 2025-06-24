@@ -8,21 +8,22 @@ import androidx.appcompat.app.AppCompatActivity
 
 class AddExpenseActivity : AppCompatActivity() {
 
+    private lateinit var dbHelper: ExpenseDatabaseHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_expense)
 
-        // 获取控件引用
+        dbHelper = ExpenseDatabaseHelper(this)  // ✅ 初始化数据库助手
+
         val etAmount = findViewById<EditText>(R.id.etAmount)
         val etNote = findViewById<EditText>(R.id.etNote)
         val btnSave = findViewById<Button>(R.id.btnSave)
 
-        // 按钮点击事件
         btnSave.setOnClickListener {
             val amountText = etAmount.text.toString().trim()
             val noteText = etNote.text.toString().trim()
 
-            // 校验金额
             if (amountText.isEmpty()) {
                 Toast.makeText(this, "请输入金额", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -34,10 +35,16 @@ class AddExpenseActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // 显示保存成功的提示
+            // ✅ 保存到数据库
+            val db = dbHelper.writableDatabase
+            val sql = "INSERT INTO expenses (amount, note) VALUES (?, ?)"
+            val statement = db.compileStatement(sql)
+            statement.bindDouble(1, amount)
+            statement.bindString(2, noteText)
+            statement.executeInsert()
+
             Toast.makeText(this, "保存成功：¥$amount\n备注：$noteText", Toast.LENGTH_LONG).show()
 
-            // 可选择返回上一页
             finish()
         }
     }
