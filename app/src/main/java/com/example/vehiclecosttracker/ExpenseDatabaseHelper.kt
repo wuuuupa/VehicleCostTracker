@@ -6,51 +6,64 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 class ExpenseDatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, "expenses.db", null, 2) { // 版本号改为2
+    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+
+    companion object {
+        private const val DATABASE_NAME = "expenses.db"
+        private const val DATABASE_VERSION = 1
+        private const val TABLE_EXPENSES = "expenses"
+    }
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
-            "CREATE TABLE expenses (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "amount REAL, " +
-                    "note TEXT, " +
-                    "timestamp TEXT, " +
-                    "vehicle TEXT)"
+            """
+            CREATE TABLE $TABLE_EXPENSES (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                amount REAL,
+                note TEXT,
+                timestamp TEXT,
+                vehicleName TEXT
+            )
+            """
         )
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS expenses")
+        db.execSQL("DROP TABLE IF EXISTS $TABLE_EXPENSES")
         onCreate(db)
     }
 
-    fun insertExpense(amount: Double, note: String, timestamp: String, vehicleName: String): Long {
+    fun insertExpense(amount: Double, note: String, vehicleName: String) {
         val db = writableDatabase
         val values = ContentValues().apply {
             put("amount", amount)
             put("note", note)
-            put("timestamp", timestamp)
-            put("vehicle", vehicleName)
+            put("timestamp", System.currentTimeMillis().toString())
+            put("vehicleName", vehicleName)
         }
-        return db.insert("expenses", null, values)
+        db.insert(TABLE_EXPENSES, null, values)
+        db.close()
     }
 
     fun getAllExpenses(): List<Expense> {
-        val expenses = mutableListOf<Expense>()
+        val expenseList = mutableListOf<Expense>()
         val db = readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM expenses ORDER BY id DESC", null)
+        val cursor = db.rawQuery("SELECT * FROM $TABLE_EXPENSES ORDER BY id DESC", null)
 
-        while (cursor.moveToNext()) {
-            val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
-            val amount = cursor.getDouble(cursor.getColumnIndexOrThrow("amount"))
-            val note = cursor.getString(cursor.getColumnIndexOrThrow("note"))
-            val timestamp = cursor.getString(cursor.getColumnIndexOrThrow("timestamp"))
-            val vehicle = cursor.getString(cursor.getColumnIndexOrThrow("vehicle"))
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getLong(cursor.getColumnIndexOrThrow("id"))
+                val amount = cursor.getDouble(cursor.getColumnIndexOrThrow("amount"))
+                val note = cursor.getString(cursor.getColumnIndexOrThrow("note"))
+                val timestamp = cursor.getString(cursor.getColumnIndexOrThrow("timestamp"))
+                val vehicleName = cursor.getString(cursor.getColumnIndexOrThrow("vehicleName"))
 
-            expenses.add(Expense(id, amount, note, timestamp, vehicle))
+                val expense = Expense(id, amount, note, timestamp, vehicleName)
+                expenseList.add(expense)
+            } while (cursor.moveToNext())
         }
-
         cursor.close()
-        return expenses
+        db.close()
+        return expenseList
     }
 }
