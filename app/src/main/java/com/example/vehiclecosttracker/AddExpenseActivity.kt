@@ -5,29 +5,33 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import java.text.SimpleDateFormat
-import java.util.*
 
 class AddExpenseActivity : AppCompatActivity() {
 
+    private lateinit var etAmount: EditText
+    private lateinit var etNote: EditText
+    private lateinit var etVehicle: EditText
+    private lateinit var btnSave: Button
     private lateinit var databaseHelper: ExpenseDatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_expense)
 
-        val etAmount = findViewById<EditText>(R.id.etAmount)
-        val etNote = findViewById<EditText>(R.id.etNote)
-        val btnSave = findViewById<Button>(R.id.btnSave)
+        etAmount = findViewById(R.id.etAmount)
+        etNote = findViewById(R.id.etNote)
+        etVehicle = findViewById(R.id.etVehicle) // 新增输入框
+        btnSave = findViewById(R.id.btnSave)
 
         databaseHelper = ExpenseDatabaseHelper(this)
 
         btnSave.setOnClickListener {
             val amountText = etAmount.text.toString().trim()
             val noteText = etNote.text.toString().trim()
+            val vehicleText = etVehicle.text.toString().trim()
 
-            if (amountText.isEmpty()) {
-                Toast.makeText(this, "请输入金额", Toast.LENGTH_SHORT).show()
+            if (amountText.isEmpty() || vehicleText.isEmpty()) {
+                Toast.makeText(this, "请输入金额和车辆名称", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -37,20 +41,9 @@ class AddExpenseActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val timestamp = getCurrentTime()
-            val result = databaseHelper.insertExpense(amount, noteText, timestamp)
-
-            if (result != -1L) {
-                Toast.makeText(this, "保存成功！", Toast.LENGTH_SHORT).show()
-                finish()
-            } else {
-                Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show()
-            }
+            databaseHelper.insertExpense(amount, noteText, vehicleText)
+            Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show()
+            finish()
         }
-    }
-
-    private fun getCurrentTime(): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        return sdf.format(Date())
     }
 }
