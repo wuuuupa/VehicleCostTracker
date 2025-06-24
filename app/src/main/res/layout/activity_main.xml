@@ -8,17 +8,18 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/tvWelcome"
         android:text="欢迎使用车辆支出记录App"
         android:textSize="24sp"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp" />
 
     <!-- 添加支出按钮 -->
     <Button
-        android:id="@+id/button_add_expense"
+        android:id="@+id/btnAddExpense"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="添加支出"
-        android:layout_marginTop="24dp" />
-
+        android:text="添加支出" />
 </LinearLayout>
